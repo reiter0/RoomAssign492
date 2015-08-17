@@ -1,0 +1,178 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.*;
+import java.util.StringTokenizer;
+
+public class automateImport
+{	
+	
+   // JDBC driver name and database URL
+   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+   static final String DB_URL = "jdbc:mysql://L-1D39-492/roomAssign";
+
+   //  Database credentials
+   static final String USER = "java";
+   static final String PASS = "mysql";
+   
+   public static void main(String[] args)    
+   {	
+	   Connection conn = null;
+	   Statement stmt = null;
+	   Statement stmt2 = null;
+	// TODO Auto-generated method stub
+		String fileName="/home/bo/workspace/492/src/sched.txt";
+		try 
+		{
+			BufferedReader br = new BufferedReader( new FileReader(fileName));
+			String strLine = null;
+			StringTokenizer st = null;
+			int lineNumber = 0, tokenNumber = 0;
+
+			while( (fileName = br.readLine()) != null)
+			{
+				lineNumber++;
+
+				//break comma separated line using ","
+				st = new StringTokenizer(fileName, ",");
+
+				while(st.hasMoreTokens())
+				{
+					//display csv values
+					tokenNumber++;
+					System.out.println("Line # " + lineNumber +
+							", Token # " + tokenNumber
+							+ ", Token : "+ st.nextToken());
+				}
+
+				//reset token number
+				tokenNumber = 0;
+
+			}
+		}
+		catch (FileNotFoundException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+  
+ 
+   try{
+      //STEP 2: Register JDBC driver
+      Class.forName("com.mysql.jdbc.Driver");
+
+      //STEP 3: Open a connection
+      System.out.println("Connecting to a selected database...");
+      conn = DriverManager.getConnection(DB_URL, USER, PASS);
+      System.out.println("Connected database successfully...");
+      
+      //STEP 4: Execute a query
+      System.out.println("Inserting records into the table...");
+      stmt = conn.createStatement();
+      stmt2 = conn.createStatement();
+      
+      //String sql = "INSERT INTO women( Year,BCSCE,BNSF,MCSCE,MNSF,DCSCE,DNSF) " +
+                   //"VALUES('2022/23','20%','19%','15%','32%','11%','22%');";
+      String numCol = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'roomAssign' AND table_name = 'roomNum';";
+      
+      ResultSet columnCount = stmt.executeQuery(numCol);
+      int temp = 0;
+      while(columnCount.next())
+      {
+    	  temp = columnCount.getInt("COUNT(*)");  
+      }
+      System.out.println("COLUMN COUNT IS + " + temp);
+      if(temp == 17)
+      {	  
+    	  String addColumn = "ALTER TABLE roomNum ADD ID INT PRIMARY KEY AUTO_INCREMENT FIRST;";
+    	  stmt.executeUpdate(addColumn);
+    	  
+      }
+      if(temp == 20)
+      {
+    	  String dropCol = "ALTER TABLE roomNum DROP startTime,DROP endTime;";
+          stmt.executeUpdate(dropCol);
+      }
+      
+     
+      
+      String sql = "LOAD DATA LOCAL INFILE \"/home/bo/workspace/492/src/schedShort.txt\" INTO TABLE roomNum FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\n'  IGNORE 1 LINES";
+      stmt.executeUpdate(sql);
+ 
+      System.out.println("Inserted records into the table...");
+      String idNum = "SELECT * FROM roomNum where CRN =\"\";";
+      ResultSet idCount = stmt.executeQuery(idNum);
+      String CRN = null;
+	  String Subj = null;
+	  String Crse = null;
+	  String Sec = null;
+	  String Cmp = null;
+	  String Cred = null;
+	  String Part_of_Term = null; 
+	  String Title = null;
+      int id =0;
+      while(idCount.next())
+      {
+    	  id = idCount.getInt("ID");
+    	  String idQuery = "SELECT * FROM roomNum where ID < " + id + " order by ID desc limit 1";
+    	  ResultSet idQueryR =  stmt2.executeQuery(idQuery);
+    	  while(idQueryR.next())
+    	  {
+    		  CRN = idQueryR.getString("CRN");
+    		  Subj = idQueryR.getString("Subj");
+    		  Crse = idQueryR.getString("Crse");
+    		  Sec = idQueryR.getString("Sec");
+    		  Cmp = idQueryR.getString("Cmp");
+    		  Cred = idQueryR.getString("Cred");
+    		  Part_of_Term = idQueryR.getString("Part_of_Term");
+    		  Title = idQueryR.getString("Title");  
+    	  }
+    	  String upDateQuery = "UPDATE roomNum SET CRN ='" +CRN+ "', Subj ='"+Subj+"', Crse='"+Crse+"', Sec='"+Sec+"', Cmp='"+Cmp+"', Cred='"+Cred+"', Part_of_Term='"+Part_of_Term+"', Title='"+Title+"' where ID='"+id+"';";
+    	  		//"(ID,CRN,Subj,Crse,Sec,Cmp,Cred,Part_of_Term,Title) VALUES('"+id+"','"+CRN+"','"+Subj+"','"+Crse+"','"+Sec+"','"+Cmp+"','"+Cred+"','"+Part_of_Term+"','"+Title+"');";
+    	  stmt2.executeUpdate(upDateQuery);
+      }
+      String addCol = "ALTER TABLE roomNum ADD startTime VARCHAR(20) after TIME, ADD endTime VARCHAR(20) after startTime;";
+      stmt2.executeUpdate(addCol);
+      
+      String timeSplit = "UPDATE roomNum SET startTime = SUBSTRING_INDEX(TIME,'-',1),endTime = SUBSTRING_INDEX(TIME,'-',-1);";
+      stmt2.executeUpdate(timeSplit);
+      try
+      {
+    	  String convertTime = "UPDATE roomNum SET startTime = str_to_date(startTime,'%h:%i %p'),endTime = str_to_date(endTime,'%h:%i %p');";
+    	  stmt2.executeUpdate(convertTime);
+      }finally{}	  
+   }catch(SQLException se)
+   {
+      //Handle errors for JDBC
+      se.printStackTrace();
+   }catch(Exception e)
+   {
+      //Handle errors for Class.forName
+      e.printStackTrace();
+   }finally
+   {
+      //finally block used to close resources
+      try{
+         if(stmt!=null)
+            conn.close();
+      }catch(SQLException se)
+      {
+      }// do nothing
+      try{
+         if(conn!=null)
+            conn.close();
+      }catch(SQLException se)
+      {
+         se.printStackTrace();
+      }//end finally try
+   }//end try
+   
+   System.out.println("Goodbye!");
+}//end main
+    
+}//end JDBCExample

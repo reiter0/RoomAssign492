@@ -1,0 +1,60 @@
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JTextField;
+
+public class Foo extends JFrame 
+{
+
+    public Foo() 
+    {
+    	super("JTextField in a JFrame");
+		
+    }
+
+    public static void main(String[] args) 
+    {
+    	
+        new Foo();
+        JFrame frame = new JFrame("Room List");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(500, 500);
+		frame.setLocation(430, 100);
+		frame.setVisible(true);
+		
+		JPanel panel = new JPanel();
+		frame.add(panel);
+
+		JLabel lbl = new JLabel("Select room and click OK");
+		panel.add(lbl);
+		lbl.setVisible(true);
+		
+		String[] combo = {"1","2","3"};
+		JComboBox<String> classList = new JComboBox<String>(combo);
+		frame.add(classList);
+		frame.setVisible(true);
+		classList.setVisible(true);
+		classList.setEditable(true);
+		panel.add(classList);
+
+		JButton btn = new JButton("OK");
+		frame.add(btn);
+		btn.setVisible(true);
+		panel.add(btn);
+		frame.add(panel);
+		
+		JTextField tf = new JTextField(); 
+		//String str = tf.getText();
+		tf.setLayout(new FlowLayout());
+		tf.setVisible(true);
+		tf.setEditable(true);
+		panel.add(tf);
+    }	
+}

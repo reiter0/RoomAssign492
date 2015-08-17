@@ -1,0 +1,103 @@
+
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.JApplet;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+
+public class ThisIsCombineofReadAndDrop extends JApplet
+{	
+	ArrayList<String> roomS = new ArrayList<String>();
+	public void readText() throws IOException
+	{
+		
+		// Create a BufferedReader from a FileReader.
+		BufferedReader reader = new BufferedReader(new FileReader("roomList.txt"));
+
+		// Loop over lines in the file and print them.
+		while (true) 
+		{
+			String line = reader.readLine();
+			if(line != null)
+			{	
+				roomS.add(line);
+			}	
+			else 
+			{
+				break;
+			}
+
+			//System.out.println(line);
+		}
+		// Close the BufferedReader.
+		reader.close();
+	}	
+	/*************************************************************************/
+	//private String[] description = { "Ebullient", "Obtuse", "Recalcitrant",
+			//"Brilliant", "Somnescent", "Timorous", "Florid", "Putrescent" };
+	private Object[] description = roomS.toArray();
+
+	private JTextField t = new JTextField(15);
+
+	private JComboBox c = new JComboBox();
+
+	private JButton b = new JButton("Add items");
+
+	private int count = 0;
+
+	public void init() 
+	{
+		for (int i = 0; i < 4; i++)
+			c.addItem(description[count++]);
+		t.setEditable(false);
+		b.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				if (count < description.length)
+					c.addItem(description[count++]);
+			}
+		});
+		c.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				t.setText("index: " + c.getSelectedIndex() + "   "
+						+ ((JComboBox) e.getSource()).getSelectedItem());
+			}
+		});
+		Container cp = getContentPane();
+		cp.setLayout(new FlowLayout());
+		cp.add(t);
+		cp.add(c);
+		cp.add(b);
+	}
+
+	public static void main(String[] args) 
+	{
+		run(new JApplet(), 200, 125);
+	}
+
+	public static void run(JApplet applet, int width, int height) 
+	{
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(applet);
+		frame.setSize(width, height);
+		applet.init();
+		applet.start();
+		frame.setVisible(true);
+	}
+} ///:~
+

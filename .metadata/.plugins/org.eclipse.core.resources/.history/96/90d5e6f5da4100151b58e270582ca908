@@ -1,0 +1,73 @@
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class Foo extends JFrame 
+{
+
+    public Foo() 
+    {
+    	
+    }
+
+    public static void main(String[] args) 
+    {
+    	
+        new Foo();
+        String[] combo = {"1","2","3"};
+        comboBox(combo);
+		
+    }	
+    public static void comboBox(String [] combo)
+	{	
+		
+		JFrame frame = new JFrame("Room List");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(500, 500);
+		frame.setLocation(430, 100);
+
+		JPanel panel = new JPanel();
+		frame.add(panel);
+
+		JLabel lbl = new JLabel("Select room and click OK");
+		panel.add(lbl);
+		lbl.setVisible(true);
+
+		final JComboBox<String> classList = new JComboBox<String>(combo);
+		frame.add(classList);
+		frame.setVisible(true);
+		classList.setVisible(true);
+		classList.setEditable(true);
+		panel.add(classList);
+
+		JButton btn = new JButton("OK");
+		panel.add(btn);
+		frame.add(panel);
+		
+		 JTextField field = new JTextField(20);
+		 panel.add(field);
+		 String input = field.getText();
+	     //frame.add(field);
+		 
+		 JButton btn2 = new JButton("OK");
+			panel.add(btn2);
+			frame.add(panel);
+			
+			btn2.addActionListener(new java.awt.event.ActionListener() 
+			{
+				public void actionPerformed(ActionEvent arg0) 
+				{
+					System.out.println("Button pressed" + input);
+				}
+				
+			});
+		
+	}
+}

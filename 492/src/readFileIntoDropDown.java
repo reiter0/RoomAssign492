@@ -1,0 +1,78 @@
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+
+public class readFileIntoDropDown extends JDialog implements ActionListener, ItemListener 
+{	
+	
+	
+	public static void main(String[]args) throws IOException 
+	{	
+		//Load class list into an ArrayList
+		ArrayList<String> roomS = new ArrayList<String>();
+
+		// Create a BufferedReader from a FileReader.
+		BufferedReader reader = new BufferedReader(new FileReader("roomList.txt"));
+
+		// Loop over lines in the file and print them.
+		while (true) 
+		{
+			String line = reader.readLine();
+			if(line != null)
+			{	
+				roomS.add(line);
+			}	
+			else 
+			{
+				break;
+			}
+		}
+		Collections.sort(roomS);
+
+		String [] combo = roomS.toArray(new String[roomS.size()]);
+		System.out.println("Sorted Room List");
+		for(int i = 0;i<combo.length;i++)
+		{
+			System.out.println(combo[i]);
+		}
+		JLabel display = new JLabel();
+		JComboBox combobox = new JComboBox(combo);
+		JButton button = new JButton("Close");
+		
+		new readFileIntoDropDown();
+		// Close the BufferedReader.
+		reader.close();
+
+	}
+
+
+	@Override
+	public void itemStateChanged(ItemEvent e) 
+	{
+		  if (e.getStateChange() == ItemEvent.SELECTED) 
+		  {
+		      JComboBox combo = (JComboBox) e.getSource();
+		      int index = combo.getSelectedIndex();
+		  }
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+}

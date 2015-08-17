@@ -1,0 +1,147 @@
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Vector;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.event.CellEditorListener;
+import javax.swing.table.DefaultTableModel;
+
+import com.mysql.jdbc.ResultSetMetaData;
+import com.sun.xml.internal.ws.api.server.Container;
+
+
+public class jTable2SQL extends JPanel implements ActionListener
+{ 	
+	// JDBC driver name and database URL
+	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+	static final String DB_URL = "jdbc:mysql://L-1D39-492/roomAssign";
+
+	//  Database credentials
+	static final String USER = "java";
+	static final String PASS = "mysql";
+
+	public Boolean add(String name,String time)
+	{	
+		Connection conn = null;
+		Statement stmt = null;
+		String roomQue = null;
+		String sql = "INSERT INTO time (NAME,TIME) VALUES('"+name+"','"+time+"');";
+		try
+		{
+			//STEP 2: Register JDBC driver
+		      Class.forName("com.mysql.jdbc.Driver");
+
+		      //STEP 3: Open a connection
+		      System.out.println("Connecting to a selected database...");
+		      conn = DriverManager.getConnection(DB_URL, USER, PASS);
+		      System.out.println("Connected database successfully...");
+		      
+	    	  //STEP 4: Execute a query
+		      System.out.println("Inserting records into the table...");
+		      Statement s = conn.prepareStatement(sql);
+		      s.execute(sql);
+		      return true;
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		return false;
+	}
+	
+	//RETRIEVE DATA
+	public DefaultTableModel getData()
+	{
+		DefaultTableModel dm = new DefaultTableModel();
+		dm.addColumn("ID");
+		dm.addColumn("NAME");
+		dm.addColumn("TIME");
+		
+		String sql = "SELECT * FROM time;";
+		try
+		{
+			Connection con = DriverManager.getConnection(DB_URL, USER, PASS);
+			Statement s = con.prepareStatement(sql);
+			ResultSet rs = s.executeQuery(sql);
+			while(rs.next())
+			{
+				String id = rs.getString(1);
+				String name = rs.getString(2);
+				String time = rs.getString(3);
+				
+				dm.addRow(new String[]{id,name,time});
+			}
+			return dm;
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		return null;
+	}
+	//UPDATE DATA
+	public Boolean update(String id,String name,String time)
+	{
+		String sql = "Update time SET NAME='"+name+"',TIME='"+time+"' WHERE ID ='"+id+"'";
+		try
+		{
+			Connection con = DriverManager.getConnection(DB_URL, USER, PASS);
+			Statement s = con.prepareStatement(sql);
+			s.execute(sql);
+			return true;
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+			return false;
+		}
+		
+	}
+	//DELETE DATA
+	public Boolean delete(String id,String name,String time)
+	{
+		String sql = "DELETE * FROM time WHERE ID ='"+id+"'";
+		try
+		{
+			Connection con = DriverManager.getConnection(DB_URL, USER, PASS);
+			Statement s = con.prepareStatement(sql);
+			s.execute(sql);
+			return true;
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+}

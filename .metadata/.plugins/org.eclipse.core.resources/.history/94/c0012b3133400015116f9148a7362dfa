@@ -1,0 +1,36 @@
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class readFileIntoDropDown
+{
+	public static void main(String[] args) throws IOException 
+	{
+		ArrayList<String> roomS = new ArrayList<String>();
+		// Create a BufferedReader from a FileReader.
+		BufferedReader reader = new BufferedReader(new FileReader("roomList.txt"));
+
+		// Loop over lines in the file and print them.
+		while (true) 
+		{
+			String line = reader.readLine();
+			roomS.add(line);
+			if (line == null) 
+			{
+				break;
+			}
+			//System.out.println(line);
+		}
+		// Close the BufferedReader.
+		reader.close();
+		for(int i = 0; i<roomS.size();i++)
+		{
+			System.out.print(roomS.get(i) + " ");
+			
+		}
+		
+		
+	}
+}

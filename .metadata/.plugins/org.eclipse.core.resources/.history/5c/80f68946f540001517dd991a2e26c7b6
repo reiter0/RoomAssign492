@@ -1,0 +1,100 @@
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
+import javax.swing.AbstractListModel;
+import javax.swing.ComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+
+import com.sun.xml.internal.ws.api.server.Container;
+
+
+public class ThisIsCombineofReadAndDrop 
+{ /*extends AbstractListModel implements
+ComboBoxModel  
+{	
+	 private Object selectedItem;
+
+	  private ArrayList roomS;
+
+	  public void ArrayListComboBoxModel(ArrayList arrayList) 
+	  {
+	    roomS = arrayList;
+	  }
+
+	  public Object getSelectedItem() {
+	    return selectedItem;
+	  }
+
+	  public void setSelectedItem(Object newValue) {
+	    selectedItem = newValue;
+	  }
+
+	  public int getSize() {
+	    return roomS.size();
+	  }
+
+	  public Object getElementAt(int i) {
+	    return roomS.get(i);
+	  }
+*/
+	public static void main(String[]args)throws IOException
+	{	
+		ArrayList<String> roomS = new ArrayList<String>();
+
+		// Create a BufferedReader from a FileReader.
+		BufferedReader reader = new BufferedReader(new FileReader("roomList.txt"));
+
+		// Loop over lines in the file and print them.
+		while (true) 
+		{
+			String line = reader.readLine();
+			if(line != null)
+			{	
+				roomS.add(line);
+			}	
+			else 
+			{
+				break;
+			}
+
+			//System.out.println(line);
+		}
+		Collections.sort(roomS);
+		System.out.println("Sorted Room List");
+		for(int i = 0;i<roomS.size();i++)
+		{
+			System.out.println(roomS.get(i));
+		}
+		System.out.println(roomS.size());
+		// Close the BufferedReader.
+		JComboBox comboBox1 = new JComboBox(roomS.toArray());
+		reader.close();
+		/* JFrame frame = new JFrame("ArrayListComboBoxModel");
+		    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		    Collection col = System.getProperties().values();
+		    ArrayList arrayList = new ArrayList(col);
+		    ArrayListComboBoxModel model = new ArrayListComboBoxModel(roomS);
+
+		    JComboBox comboBox = new JComboBox(model);
+
+		    Container contentPane = frame.getContentPane();
+		    contentPane.add(comboBox, BorderLayout.NORTH);
+		    frame.setSize(300, 225);
+		    frame.setVisible(true);
+		    */
+	}	
+	/*************************************************************************/
+	
+
+} 
+

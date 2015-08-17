@@ -1,0 +1,49 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+
+
+public class ThisIsCombineofReadAndDrop 
+{	
+
+	public static void main(String[]args)throws IOException
+	{	
+		ArrayList<String> roomS = new ArrayList<String>();
+
+		// Create a BufferedReader from a FileReader.
+		BufferedReader reader = new BufferedReader(new FileReader("roomList.txt"));
+
+		// Loop over lines in the file and print them.
+		while (true) 
+		{
+			String line = reader.readLine();
+			if(line != null)
+			{	
+				roomS.add(line);
+			}	
+			else 
+			{
+				break;
+			}
+
+			//System.out.println(line);
+		}
+		for(int i = 0;i<roomS.size();i++)
+		{
+			System.out.println(roomS.get(i));
+		}
+		System.out.println("Unsorted done");
+		Collections.sort(roomS);
+		for(int i = 0;i<roomS.size();i++)
+		{
+			System.out.println(roomS.get(i));
+		}
+		// Close the BufferedReader.
+		reader.close();
+	}	
+	/*************************************************************************/
+
+} 
+

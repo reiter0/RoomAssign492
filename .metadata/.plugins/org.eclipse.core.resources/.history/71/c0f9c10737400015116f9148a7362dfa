@@ -1,0 +1,108 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.*;
+import java.util.StringTokenizer;
+
+public class automateImport
+{	
+	
+   // JDBC driver name and database URL
+   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+   static final String DB_URL = "jdbc:mysql://L-1D39-492/roomAssign";
+
+   //  Database credentials
+   static final String USER = "java";
+   static final String PASS = "mysql";
+   
+   public static void main(String[] args)    
+   {	
+	   Connection conn = null;
+	   Statement stmt = null;
+	// TODO Auto-generated method stub
+		String fileName="/home/bo/workspace/492/src/test.txt";
+		try 
+		{
+			BufferedReader br = new BufferedReader( new FileReader(fileName));
+			String strLine = null;
+			StringTokenizer st = null;
+			int lineNumber = 0, tokenNumber = 0;
+
+			while( (fileName = br.readLine()) != null)
+			{
+				lineNumber++;
+
+				//break comma separated line using ","
+				st = new StringTokenizer(fileName, ",");
+
+				while(st.hasMoreTokens())
+				{
+					//display csv values
+					tokenNumber++;
+					System.out.println("Line # " + lineNumber +
+							", Token # " + tokenNumber
+							+ ", Token : "+ st.nextToken());
+				}
+
+				//reset token number
+				tokenNumber = 0;
+
+			}
+		}
+		catch (FileNotFoundException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+  
+ 
+   try{
+      //STEP 2: Register JDBC driver
+      Class.forName("com.mysql.jdbc.Driver");
+
+      //STEP 3: Open a connection
+      System.out.println("Connecting to a selected database...");
+      conn = DriverManager.getConnection(DB_URL, USER, PASS);
+      System.out.println("Connected database successfully...");
+      
+      //STEP 4: Execute a query
+      System.out.println("Inserting records into the table...");
+      stmt = conn.createStatement();
+      
+      //String sql = "INSERT INTO women( Year,BCSCE,BNSF,MCSCE,MNSF,DCSCE,DNSF) " +
+                   //"VALUES('2022/23','20%','19%','15%','32%','11%','22%');";
+      String sql = "LOAD DATA LOCAL INFILE \"/home/bo/workspace/492/src/sched.txt\" INTO TABLE roomNum FIELDS TERMINATED BY '\\t'";
+      stmt.executeUpdate(sql);
+ 
+      System.out.println("Inserted records into the table...");
+
+   }catch(SQLException se){
+      //Handle errors for JDBC
+      se.printStackTrace();
+   }catch(Exception e){
+      //Handle errors for Class.forName
+      e.printStackTrace();
+   }finally{
+      //finally block used to close resources
+      try{
+         if(stmt!=null)
+            conn.close();
+      }catch(SQLException se){
+      }// do nothing
+      try{
+         if(conn!=null)
+            conn.close();
+      }catch(SQLException se){
+         se.printStackTrace();
+      }//end finally try
+   }//end try
+   
+   System.out.println("Goodbye!");
+}//end main
+    
+}//end JDBCExample

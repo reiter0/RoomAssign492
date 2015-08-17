@@ -1,0 +1,269 @@
+package com.hibernate.stock;
+
+   import java.awt.BorderLayout;
+   import java.awt.EventQueue;
+
+   import javax.swing.JFrame;
+   import javax.swing.JPanel;
+   import javax.swing.border.EmptyBorder;
+   import javax.swing.table.DefaultTableModel;
+
+   import java.awt.GridLayout;
+
+   import javax.swing.JLabel;
+   import javax.swing.JScrollPane;
+   import javax.swing.JTextField;
+   import javax.swing.JTable;
+   import javax.swing.JButton;
+
+   import org.hibernate.Query;
+   import org.hibernate.SQLQuery;
+   import org.hibernate.Session;
+   import org.hibernate.SessionFactory;
+   import org.hibernate.Transaction;
+   import org.hibernate.cfg.Configuration;
+
+   import java.awt.event.ActionListener;
+   import java.awt.event.ActionEvent;
+   import java.util.ArrayList;
+   import java.util.List;
+   import java.awt.event.MouseAdapter;
+   import java.awt.event.MouseEvent;
+
+   public class JTableRow extends JFrame 
+   {
+
+private JPanel contentPane;
+private JTextField textField;
+private JTextField textField_1;
+private JTextField textField_2;
+private JTextField textField_3;
+private JTable table;
+List biens;
+int i;
+PersistantBien bien = new PersistantBien();
+final String columnNames[] = {"ID", "Nom", "Catégorie", "Quantité"};
+final DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+
+/**
+ * Launch the application.
+ */
+public static void main(String[] args) {
+    EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            try {
+                Gestion frame = new Gestion();
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    });
+}
+
+/**
+ * Create the frame.
+ */
+public Gestion() {
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setBounds(100, 100, 450, 300);
+    contentPane = new JPanel();
+    contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+    setContentPane(contentPane);
+    contentPane.setLayout(null);
+
+    JLabel lblId = new JLabel("ID:");
+    lblId.setBounds(12, 12, 70, 15);
+    contentPane.add(lblId);
+
+    JLabel lblNom = new JLabel("nom:");
+    lblNom.setBounds(12, 39, 70, 15);
+    contentPane.add(lblNom);
+
+    JLabel lblCatgorie = new JLabel("catégorie:");
+    lblCatgorie.setBounds(12, 69, 70, 15);
+    contentPane.add(lblCatgorie);
+
+    JLabel lblQuantit = new JLabel("quantité:");
+    lblQuantit.setBounds(12, 108, 70, 15);
+    contentPane.add(lblQuantit);
+
+    textField = new JTextField();
+    textField.setBounds(106, 10, 114, 19);
+    contentPane.add(textField);
+    textField.setColumns(10);
+
+    textField_1 = new JTextField();
+    textField_1.setBounds(106, 37, 114, 19);
+    contentPane.add(textField_1);
+    textField_1.setColumns(10);
+
+    textField_2 = new JTextField();
+    textField_2.setBounds(106, 67, 114, 19);
+    contentPane.add(textField_2);
+    textField_2.setColumns(10);
+
+    textField_3 = new JTextField();
+    textField_3.setBounds(106, 106, 114, 19);
+    contentPane.add(textField_3);
+    textField_3.setColumns(10);
+
+    table = new JTable();
+    table.setBounds(361, 50, 1, 1);
+    contentPane.add(table);
+
+    final JScrollPane tableScrollPane = new JScrollPane(table);
+    tableScrollPane.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+            tableModel = (DefaultTableModel) table.getModel();
+            textField.setText(tableModel.getValueAt(table.getSelectedRow(), 0).toString());
+            textField_1.setText(tableModel.getValueAt(table.getSelectedRow(), 1).toString());
+            textField_2.setText(tableModel.getValueAt(table.getSelectedRow(), 2).toString());
+            textField_3.setText(tableModel.getValueAt(table.getSelectedRow(), 3).toString());
+        }
+    });
+    tableScrollPane.setBounds(240, 11, 198, 135);
+    contentPane.add(tableScrollPane);
+
+
+    JButton btnAjouter = new JButton("Ajouter");
+    btnAjouter.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent arg0) {
+
+            Configuration cfg = new Configuration();
+            cfg.configure("hibernate.cfg.xml");
+
+            SessionFactory sf = cfg.buildSessionFactory();
+
+            Session s = sf.openSession();
+
+            Transaction tx = s.beginTransaction();
+            bien.setId_article(textField.getText());
+            bien.setNom_article(textField_1.getText());
+            bien.setCategorie(textField_2.getText());
+            bien.setQuantite(textField_3.getText());
+
+            s.save(bien);
+            s.flush();
+            tx.commit();
+            s.close();
+
+        }
+    });
+    btnAjouter.setBounds(12, 158, 117, 25);
+    contentPane.add(btnAjouter);
+
+    JButton btnEditer = new JButton("Editer");
+
+    btnEditer.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            Configuration cfg = new Configuration();
+            cfg.configure("hibernate.cfg.xml");
+
+            SessionFactory sf = cfg.buildSessionFactory();
+
+            Session s = sf.openSession();
+
+            Transaction tx = s.beginTransaction();
+            DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+            tableModel = (DefaultTableModel) table.getModel();
+            tableModel.setValueAt(textField.getText(), table.getSelectedRow(), 0);
+            tableModel.setValueAt(textField_1.getText(), table.getSelectedRow(), 1);
+            tableModel.setValueAt(textField_2.getText(), table.getSelectedRow(), 2);
+            tableModel.setValueAt(textField_3.getText(), table.getSelectedRow(), 3);
+
+            SQLQuery query=s.createSQLQuery("update TBiens "
+                    + "set id_article='"+ table.getValueAt(table.getSelectedRow(),0) +"', "
+                    + "nom_article= '"+ table.getValueAt(table.getSelectedRow(),1) +"', "
+                    + "categorie= '"+ table.getValueAt(table.getSelectedRow(),2) +"' , "
+                    + "quantite= '"+ table.getValueAt(table.getSelectedRow(),0) +"' "
+                    + "where id_article = '"+ table.getValueAt(table.getSelectedRow(),0) +"'");
+
+
+            query.executeUpdate();
+
+
+            s.flush();
+            tx.commit();
+            s.close();
+        }
+
+
+    });
+    btnEditer.setBounds(150, 158, 117, 25);
+    contentPane.add(btnEditer);
+
+    JButton btnSupprimer = new JButton("supprimer");
+    btnSupprimer.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent arg0) {
+            Configuration cfg = new Configuration();
+            cfg.configure("hibernate.cfg.xml");
+
+            SessionFactory sf = cfg.buildSessionFactory();
+
+            Session s = sf.openSession();
+
+            Transaction tx = s.beginTransaction();
+
+            DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+            tableModel = (DefaultTableModel) table.getModel();
+
+            SQLQuery query=s.createSQLQuery("delete from TBiens where id_article = '"+ table.getValueAt(table.getSelectedRow(),0) +"'");
+            query.executeUpdate();
+
+            tableModel.removeRow(table.getSelectedRow());
+
+            s.flush();
+            tx.commit();
+            s.close();
+
+        }
+    });
+    btnSupprimer.setBounds(303, 158, 117, 25);
+    contentPane.add(btnSupprimer);
+
+    JButton btnAfficher = new JButton("Afficher");
+    btnAfficher.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent arg0) {
+            try{
+                Configuration cfg = new Configuration();
+                cfg.configure("hibernate.cfg.xml");
+
+                SessionFactory sf = cfg.buildSessionFactory();
+
+                Session s = sf.openSession();
+
+                Transaction tx = s.beginTransaction();
+                SQLQuery query=s.createSQLQuery("select * from TBiens");
+                biens = query.list();
+                ArrayList<Object[]> res = new ArrayList<Object[]>(biens);
+
+
+                final DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+                table.setModel(tableModel);
+                for (final Object[] bien : res) {
+                    // Assuming each row in the biens list is a list of strings...
+                    final Object[] row = bien;
+                    tableModel.addRow(row);
+
+                }
+
+                biens.size();
+                System.out.print(i);
+                s.flush();
+                tx.commit();
+                s.close();
+            }
+            catch (ClassCastException e) {
+                e.printStackTrace();
+            }
+
+        }
+    });
+    btnAfficher.setBounds(166, 235, 117, 25);
+    contentPane.add(btnAfficher);
+}
+   }

@@ -1,0 +1,119 @@
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+import java.util.*;
+
+public class gui extends JPanel implements ActionListener {
+	
+	private static JFrame frame;
+	private JLabel room, days, instructor, course;
+	private String place, when, who, what;
+	private JComboBox daysList, placeList;
+	String currentPattern;
+	
+	public gui() {
+		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		String[] days = {
+				"MWF",
+				"MW",
+				"TR",
+				"Mondays only",
+				"Tuesdays only",
+				"Wednesdays only",
+				"Thursdays only",
+				"Fridays only"
+		};
+		
+		String[] places = {
+				"SWGN 2A31",
+				"SWGN 1D15",
+				"SWGN 2A27",
+				"300M A103",
+				"300M B103",
+				"SUMWLT 205",
+				"Mars",
+				"Atlantis",
+				"Funky Town",
+				"Shadowmoon Valley",
+				"Yo Mama's House"
+		};
+		
+		// Set up UI for doing shit
+		JLabel when = new JLabel("When's the class?");
+		JLabel where = new JLabel("Where's the class?");
+		daysList = new JComboBox(days);
+		daysList.setEditable(false);
+		daysList.addActionListener(this);
+		
+		JPanel patternPanel = new JPanel(); // this is the main panel for this interface
+		patternPanel.setLayout(new BoxLayout(patternPanel, BoxLayout.PAGE_AXIS));
+		patternPanel.add(when); // thing is simply a text header
+		// align and add the days combo box
+		daysList.setAlignmentX(Component.LEFT_ALIGNMENT);
+		patternPanel.add(daysList);
+		
+		patternPanel.add(where);
+		placeList.setAlignmentX(Component.LEFT_ALIGNMENT);
+		patternPanel.add(placeList);
+		
+		patternPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
+		add(patternPanel);
+		add(Box.createRigidArea(new Dimension(0, 10)));
+		
+	
+	} // end default constructor
+
+	
+	private static void createAndShow() {
+		// Create and set up the window
+		JFrame frame = new JFrame("Class day thing");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		// Create and set up the content pane
+		JComponent newContentPane = new gui();
+		newContentPane.setOpaque(true);
+		frame.setContentPane(newContentPane);
+		
+		// Display the window
+		frame.pack();
+		frame.setVisible(true);
+	} // createAndShow
+	
+	public void actionPerformed(ActionEvent e) {
+		JComboBox cb = (JComboBox)e.getSource();
+		if(cb == daysList) {
+			when = (String)cb.getSelectedItem();
+			System.out.println(when);
+		}
+		else if (cb == placeList) {
+			place = (String)cb.getSelectedItem();
+			System.out.println(place);
+		}
+	} // actionPerformed
+	
+	public static void main(String[] args) {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				createAndShow();
+			}
+		});
+		
+		
+		
+	} // end main
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+} // class gui
