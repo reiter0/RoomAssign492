@@ -1,3 +1,11 @@
+/*
+ * Cody Reiter, Bo Aye, John Phillips
+ * File: studentEval.java
+ * Description: Class dedicated to reading in and placing the data
+ * 				from Student Evaluations into a MySQL database
+ * Date last modified: 8/18/2015
+ */
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,8 +20,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.regex.*;
-// This is Cody Reiter, putting in the effort baby
-// This class is an error proof way of putting evaluations into database tables.
+
 public class studentEval 
 {
 	// JDBC driver name and database URL
@@ -42,16 +49,19 @@ public class studentEval
 			try 
 			{
 				Class.forName("com.mysql.jdbc.Driver");
-				//STEP 3: Open a connection
+				// Open a connection
 				System.out.println("Connecting to a selected database...");
 				conn = DriverManager.getConnection(DB_URL, USER, PASS);
 				System.out.println("Connected database successfully...");
 
-				//STEP 4: Execute a query
+				// Execute a query
 				System.out.println("Inserting records into the table...");
 				stmt = conn.createStatement();
+				String trun = "truncate profile";
+			    stmt.executeUpdate(trun);
 				
-			} catch (ClassNotFoundException | SQLException e) 
+			} 
+			catch (ClassNotFoundException | SQLException e) 
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -78,13 +88,8 @@ public class studentEval
 					{	
 						tempList[0] = m.group(2);
 					}	
-				}
-//				Pattern pCourse = Pattern.compile(courseRegex);
-//				Matcher mCourse = pCourse.matcher(test1);
-//				while (mCourse.find()) 
-//				{
-//					System.out.println(mCourse.group(2));
-//				}
+				}			
+				
 				//Gets the course name
 				p = Pattern.compile(courseRegex);
 				m = p.matcher(test1);
@@ -107,7 +112,7 @@ public class studentEval
 						tempList[2] = m.group(1);
 					}	
 				}
-				//Gets the data
+				//Gets the data and matches it to the correct column
 				p = Pattern.compile(nRegex);
 				m = p.matcher(test1);
 				while (m.find()) 
@@ -248,5 +253,5 @@ public class studentEval
 			e.printStackTrace();
 		}
 		
-	}
-}
+	} // main(String[])
+} // studentEval

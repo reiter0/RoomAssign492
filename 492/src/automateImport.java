@@ -1,3 +1,10 @@
+/******************************************************************************
+ * By: BCJPRA
+ * File: automateImport.java
+ * Description: Class designed to import and set up data for a MySQL database
+ * Date last modified: 8/18/2015
+ * 
+ *******************************************************************************/
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -78,6 +85,9 @@ public class automateImport
       
       //String sql = "INSERT INTO women( Year,BCSCE,BNSF,MCSCE,MNSF,DCSCE,DNSF) " +
                    //"VALUES('2022/23','20%','19%','15%','32%','11%','22%');";
+      String trun = "truncate roomNum";
+      stmt.executeUpdate(trun);
+      
       String numCol = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'roomAssign' AND table_name = 'roomNum';";
       
       ResultSet columnCount = stmt.executeQuery(numCol);
@@ -101,7 +111,7 @@ public class automateImport
       
      
       
-      String sql = "LOAD DATA LOCAL INFILE \"/home/bo/workspace/492/src/schedShort.txt\" INTO TABLE roomNum FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\n'  IGNORE 1 LINES";
+      String sql = "LOAD DATA LOCAL INFILE \"/home/bo/workspace/492/src/sched.txt\" INTO TABLE roomNum FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\n'  IGNORE 1 LINES (@dummy,CRN,Subj,Crse,Sec,Cmp,Cred,Part_of_Term,Title,DayZ,TIME,Cap,Act,Rem,Instructor,DateZ,Location,Attribute);";
       stmt.executeUpdate(sql);
  
       System.out.println("Inserted records into the table...");
@@ -144,6 +154,9 @@ public class automateImport
         
       String convertTime = "UPDATE IGNORE roomNum SET Start_time = str_to_date(Start_time,'%h:%i %p'),End_time = str_to_date(End_time,'%h:%i %p');";
       stmt2.executeUpdate(convertTime);
+      
+      String typeTime = "ALTER TABLE roomNum MODIFY Start_time TIME, MODIFY End_time TIME;";
+      stmt2.executeUpdate(typeTime);
       	  
    }catch(SQLException se)
    {
