@@ -88,6 +88,16 @@ public class automateImport
       String trun = "truncate roomNum";
       stmt.executeUpdate(trun);
       
+      String dropTrig = "drop trigger IF EXISTS roomNum_no_overlap_update;";
+      stmt.execute(dropTrig);
+      
+      String dropTrig2 =  "DROP TRIGGER IF EXISTS roomNum__ai;";
+      stmt.execute(dropTrig2);
+      String dropTrig3 = "DROP TRIGGER IF EXISTS roomNum__au;";
+      stmt.execute(dropTrig3);
+      String dropTrig4 = "DROP TRIGGER IF EXISTS roomNum__bd;";
+      stmt.execute(dropTrig4);
+      
       String numCol = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'roomAssign' AND table_name = 'roomNum';";
       
       ResultSet columnCount = stmt.executeQuery(numCol);
@@ -157,7 +167,30 @@ public class automateImport
       
       String typeTime = "ALTER TABLE roomNum MODIFY Start_time TIME, MODIFY End_time TIME;";
       stmt2.executeUpdate(typeTime);
-      	  
+      
+
+      String addTrig = "create trigger roomNum_no_overlap_update before update on roomNum for each row begin  " +
+      		"if exists (select * from roomNum where ID != new.ID and Location = new.Location " +
+      		"and ((SUBSTRING(new.DayZ,1,1) != '' and (SUBSTRING(DayZ,1,1) = SUBSTRING(new.DayZ,1,1))) " +
+      		"or (SUBSTRING(new.DayZ,2,2) != '' and (SUBSTRING(DayZ,2,2) = SUBSTRING(new.DayZ,2,2))) " +
+      		"or (SUBSTRING(new.DayZ,1,1) != '' and (SUBSTRING(DayZ,2,2) = SUBSTRING(new.DayZ,1,1)))" + 
+      		"or (SUBSTRING(new.DayZ,3,3) != '' and (SUBSTRING(DayZ,3,3) = SUBSTRING(new.DayZ,3,3))) " +
+      		"or (SUBSTRING(new.DayZ,2,2) != '' and (SUBSTRING(DayZ,3,3) = SUBSTRING(new.DayZ,2,2))) " +
+      		"or (SUBSTRING(new.DayZ,1,1) != '' and (SUBSTRING(DayZ,3,3) = SUBSTRING(new.DayZ,1,1))) " +
+      		"or (SUBSTRING(new.DayZ,4,4) != '' and (SUBSTRING(DayZ,4,4) = SUBSTRING(new.DayZ,4,4))) " +
+      		"or (SUBSTRING(new.DayZ,5,5) != '' and (SUBSTRING(DayZ,5,5) = SUBSTRING(new.DayZ,5,5)))) " +
+      		"and new.Start_time != '' and new.End_time != '' " +
+      		"and Start_time <= new.End_time and End_time >= new.Start_time) " +
+      		"then signal sqlstate '45000' SET MESSAGE_TEXT = 'Overlaps with existing data'; end if; end;";
+      stmt2.execute(addTrig);
+      
+      String addTrig2 = "CREATE TRIGGER roomNum__ai AFTER INSERT ON roomNum FOR EACH ROW INSERT INTO roomNum_history SELECT 'insert', NULL, NOW(), d.* FROM roomNum AS d WHERE ID = NEW.ID;";
+      stmt2.execute(addTrig2);
+      String addTrig3 = "CREATE TRIGGER roomNum__au AFTER UPDATE ON roomNum FOR EACH ROW INSERT INTO roomNum_history SELECT 'update', NULL, NOW(), d.* FROM roomNum AS d WHERE d.ID = NEW.ID;";
+      stmt2.execute(addTrig3);
+      String addTrig4 = "CREATE TRIGGER roomNum__bd BEFORE DELETE ON roomNum FOR EACH ROW INSERT INTO roomNum_history SELECT 'delete', NULL, NOW(), d.* FROM roomNum AS d WHERE d.ID = OLD.ID;";
+      stmt2.execute(addTrig4);
+
    }catch(SQLException se)
    {
       //Handle errors for JDBC

@@ -88,7 +88,7 @@ public class createTable extends JFrame implements ActionListener, TableModelLis
 		table.revalidate();
 		getContentPane().add(scrollPane);
 		setVisible( true );
-		setSize( 1300, 550 );
+		setSize( 1300, 600 );
 
 	}// END createTable(Vector<String>columnNames,Vector<Vector><Object>>B)
 	/**********************************************************************
@@ -143,7 +143,7 @@ public class createTable extends JFrame implements ActionListener, TableModelLis
 			{
 				
 				JOptionPane.showMessageDialog(null,"Times overlap");
-//				ex.printStackTrace(); 
+				ex.printStackTrace(); 
 				return false;
 			}
 		}

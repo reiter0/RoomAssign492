@@ -1,5 +1,5 @@
 /*************************************************************************************
- * By: Bo Aye, Cody Reiter, John Phillips
+ * By: Bo Aye,Cody,John
  * File: scheduler.java
  * Description: Class that reads in text files to use for building a JTable
  * 				and also handles the connection to and updates to the MYSql 
@@ -291,31 +291,7 @@ public class scheduler extends JPanel implements ActionListener,TableModelListen
 		      
 		      roomQue = "SELECT * FROM roomNum where Location ='"+A+"';";
 		      ResultSet resultRoom = stmt.executeQuery(roomQue);
-		      //System.out.println(resultRoom.toString());
-//		      Time startTime =null;
-//		      Time endTime = null;
-//		      
-//		      while(resultRoom.next())
-//		      {
-//		    	 
-//		    	  
-//		    	  String start = resultRoom.getString("Start_time");
-//		    	  if(start != null)
-//		    	  {	  
-//		    		  startTime = java.sql.Time.valueOf(start);
-//		   
-//		    	  }
-//		    	  String end = resultRoom.getString("End_time");
-//		    	  if(end != null)
-//		    	  {	  
-//		    		 endTime = java.sql.Time.valueOf(end);
-//
-//		    	  }
-//
-//		    	  System.out.println(startTime);
-//		    	  System.out.println(endTime);
-//
-//		      }		
+	
 		      
 		}
 		catch (ClassNotFoundException e) 
@@ -436,7 +412,7 @@ public class scheduler extends JPanel implements ActionListener,TableModelListen
 		} // while(rs.next())
 		
 		int lastID=getLastID();
-		System.out.println("LAST ID IS "+lastID);
+		//System.out.println("LAST ID IS "+lastID);
 		Vector<Object> blanky = new Vector<Object>();
 		blanky.add(lastID+1);
 		for (int columnIndex = 1; columnIndex < columnCount; columnIndex++) 

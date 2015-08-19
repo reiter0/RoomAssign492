@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.regex.*;
 
+import javax.swing.JFrame;
+
 public class studentEval 
 {
 	// JDBC driver name and database URL
@@ -252,6 +254,6 @@ public class studentEval
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+	
 	} // main(String[])
 } // studentEval
